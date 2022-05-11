@@ -1,0 +1,10 @@
+__pycache__
+lightning_logs
+README_old.md
+clip_img_retrieval.py
+*.out
+*.job
+check_translations_with_lmdb_wsis.py
+get_texts.py
+translation_availability_check.txt
+
