@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -46,6 +48,7 @@ class CLIPWrapper(pl.LightningModule):
         del self.set_visual_model
         print("OPENAI MODEL LOADED!")
 
+        self.hyper_params = hparams
         self.minibatch_size = hparams.minibatch_size
         #self.results_saving_dir = hparams.results_saving_dir
 
@@ -188,7 +191,11 @@ class CLIPWrapper(pl.LightningModule):
         sns.set(rc={'figure.figsize':(16,12)})
         scatter = sns.scatterplot(x="comp-1", y="comp-2", hue=df.y.tolist(), s=100, palette="hls",
                         data=df).set(title="Image Embeddings T-SNE projection")
-        plt.savefig("./lightning_logs/tsne_plots/tsne_{}.png".format(self.current_epoch))
+
+        #filepath = Path("./lightning_logs/tsne_plots/")
+        #filepath.parent.mkdir(parents=True, exist_ok=True)
+        os.makedirs("./lightning_logs/tsne_plots/", exist_ok=True)
+        plt.savefig("./lightning_logs/tsne_plots/tsne_plots{}.png".format(self.current_epoch))
         plt.close()
         #self.logger.experiment.add_image("generated_images", scatter.get_figure, self.current_epoch)
 
@@ -204,8 +211,8 @@ class CLIPWrapper(pl.LightningModule):
     def configure_optimizers(self):
 
         params = [
-        {"params": self.model.visual.parameters(), "lr": self.hparams.vision_lr},
-        {"params": self.model.transformer.parameters(), "lr": self.hparams.lm_lr}
+        {"params": self.model.visual.parameters(), "lr": self.hyper_params.vision_lr},
+        {"params": self.model.transformer.parameters(), "lr": self.hyper_params.lm_lr}
         ]
 
         optimizer = torch.optim.AdamW(params, weight_decay=0.2, betas=(0.9,0.999),eps=1e-8)
@@ -213,7 +220,7 @@ class CLIPWrapper(pl.LightningModule):
         # TODO Watch: https://github.com/openai/CLIP/issues/107
         lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(
             optimizer,
-            T_0=self.hparams.restart_lr_after
+            T_0=self.hyper_params.restart_lr_after
         )
 
         return {'optimizer': optimizer, 'lr_scheduler': lr_scheduler}

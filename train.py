@@ -32,7 +32,7 @@ if __name__ == '__main__':
     parser.add_argument('--TransMIL_config_dir', type=str, default='models/configs/TransMIL.yaml')
     parser.add_argument('--vision_lr', type=float, default=8e-5)
     parser.add_argument('--lm_lr', type=float, default=1e-5)
-    parser.add_argument('--restart_lm_after', type=int, default=500)
+    parser.add_argument('--restart_lr_after', type=int, default=500)
     parser.add_argument('--clip_model_name', type=str, default='ViT-B/32')
     parser.add_argument('--val_carcinoma_txts', type=str, default='data/validation_txts/carcinoma/carcinoma_reports_fold_9.txt')
 

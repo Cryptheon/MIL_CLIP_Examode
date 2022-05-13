@@ -1,5 +1,4 @@
 TransMIL:
-    latent_dims: 784
+    latent_dims: 12544
     hidden_dims: 512
     clip_dims: 512
-
